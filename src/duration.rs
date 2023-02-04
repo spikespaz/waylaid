@@ -1,3 +1,17 @@
+pub mod serde_with {
+    use std::time::Duration;
+
+    use super::parser::parse_duration;
+
+    // this could be zero-copy, but the macro doesn't generate borrowing signatures
+    serde_with::serde_conv!(
+        pub DurationString,
+        Duration,
+        |dur: &Duration| format!("{}s", dur.as_secs()),
+        |input: String| parse_duration(&input).map(Duration::from_secs)
+    );
+}
+
 pub mod parser {
     use once_cell::sync::Lazy;
     use regex::{Match, Regex};

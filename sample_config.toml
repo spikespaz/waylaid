@@ -1,0 +1,17 @@
+[[timeouts]]
+timeout = "60s"
+command = "slight set -D 15% -t 3s"
+resume_command = "slight set 90% -t 500ms"
+
+[[timeouts]]
+timeout = "2m"
+command = "swaylock -f --grace 30"
+
+[[timeouts]]
+timeout = "5m"
+command = "hyprctl dispatch dpms off"
+resume_command = "hyprctl dispatch dpms on"
+
+[[timeouts]]
+timeout = "7m 30s"
+command = "systemctl suspend-then-hibernate"
