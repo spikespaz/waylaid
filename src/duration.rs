@@ -6,24 +6,20 @@ pub mod parser {
     static DURATION_RE: Lazy<Regex> = Lazy::new(|| Regex::new(DURATION_RE_STR).unwrap());
 
     pub fn parse_duration(input: &str) -> Result<u64, ()> {
-        match DURATION_RE.captures(input.trim()) {
-            Some(caps) => {
-                let to_s = |x| move |m: Match| m.as_str().parse::<u64>().unwrap() * x;
-                let h = caps.name("h").map(to_s(60 * 60));
-                let m = caps.name("m").map(to_s(60));
-                let s = caps.name("s").map(to_s(1));
-                let parts = &[h, m, s];
+        let caps = DURATION_RE.captures(input.trim()).unwrap();
+        let to_s = |x| move |m: Match| m.as_str().parse::<u64>().unwrap() * x;
+        let h = caps.name("h").map(to_s(60 * 60));
+        let m = caps.name("m").map(to_s(60));
+        let s = caps.name("s").map(to_s(1));
+        let parts = &[h, m, s];
 
-                if parts.iter().all(Option::is_none) {
-                    Err(())
-                } else {
-                    Ok(parts.iter().fold(0, |a, b| match b {
-                        Some(s) => a + s,
-                        None => a,
-                    }))
-                }
-            }
-            None => Err(()),
+        if parts.iter().all(Option::is_none) {
+            Err(())
+        } else {
+            Ok(parts.iter().fold(0, |a, b| match b {
+                Some(s) => a + s,
+                None => a,
+            }))
         }
     }
 
@@ -40,6 +36,7 @@ pub mod parser {
         #[test_case("2m", Ok(120))]
         #[test_case("1", Err(()))]
         #[test_case("m", Err(()))]
+        #[test_case("", Err(()))]
         fn test_parse_duration(input: &str, expect: Result<u64, ()>) {
             assert_eq!(parse_duration(input), expect)
         }
